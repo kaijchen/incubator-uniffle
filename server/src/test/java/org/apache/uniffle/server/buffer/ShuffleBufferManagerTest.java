@@ -18,11 +18,13 @@
 package org.apache.uniffle.server.buffer;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.common.collect.RangeMap;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -45,7 +47,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -541,18 +542,9 @@ public class ShuffleBufferManagerTest extends BufferTestBase {
   }
 
   private void waitForFlush(ShuffleFlushManager shuffleFlushManager,
-      String appId, int shuffleId, int expectedBlockNum) throws Exception {
-    int retry = 0;
-    long committedCount = 0;
-    do {
-      committedCount = shuffleFlushManager.getCommittedBlockIds(appId, shuffleId).getLongCardinality();
-      if (committedCount < expectedBlockNum) {
-        Thread.sleep(500);
-      }
-      retry++;
-      if (retry > 10) {
-        fail("Flush data time out");
-      }
-    } while (committedCount < expectedBlockNum);
+      String appId, int shuffleId, int expectedBlockNum) {
+    Awaitility.await().timeout(Duration.ofSeconds(5)).until(() ->
+        shuffleFlushManager.getCommittedBlockIds(appId, shuffleId).getLongCardinality()
+            >= expectedBlockNum);
   }
 }
