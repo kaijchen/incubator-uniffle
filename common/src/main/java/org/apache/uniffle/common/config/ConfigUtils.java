@@ -120,14 +120,7 @@ public class ConfigUtils {
     } else if (o.getClass() == Integer.class) {
       return ((Integer) o).longValue();
     }
-    if (UnitConverter.isByteString(o.toString())) {
-      return UnitConverter.byteStringAsBytes(o.toString());
-    } else {
-      // intType only support the size that less than 4GB,
-      // sometimes it's dangerous.
-      // So we should use longType as mush as possible.
-      return Long.parseLong(o.toString());
-    }
+    return Long.parseLong(o.toString());
   }
 
   static Long convertToSizeInBytes(Object o) {

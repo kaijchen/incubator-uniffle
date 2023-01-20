@@ -105,12 +105,12 @@ public class ConfigUtilsTest {
         Arguments.arguments(Long.MAX_VALUE, Long.MAX_VALUE),
         Arguments.arguments(Long.MIN_VALUE, Long.MIN_VALUE),
         Arguments.arguments("123", 123L),
-        Arguments.arguments("7B", 7L),
-        Arguments.arguments("6KB", 6L << 10),
-        Arguments.arguments("5MB", 5L << 20),
-        Arguments.arguments("4GB", 4L << 30),
-        Arguments.arguments("3TB", 3L << 40),
-        Arguments.arguments("2PB", 2L << 50),
+        Arguments.arguments("7B", null),
+        Arguments.arguments("6KB", null),
+        Arguments.arguments("5MB", null),
+        Arguments.arguments("4GB", null),
+        Arguments.arguments("3TB", null),
+        Arguments.arguments("2PB", null),
         Arguments.arguments("2.0", null),
         Arguments.arguments("foo", null)
     );
