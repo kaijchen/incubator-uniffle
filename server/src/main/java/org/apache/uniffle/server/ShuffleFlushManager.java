@@ -85,7 +85,7 @@ public class ShuffleFlushManager {
     threadPoolExecutor = createFlushEventExecutor();
     storageBasePaths = shuffleServerConf.get(ShuffleServerConf.RSS_STORAGE_BASE_PATH);
     pendingEventTimeoutSec = shuffleServerConf.getLong(ShuffleServerConf.PENDING_EVENT_TIMEOUT_SEC);
-    startEventProcesser();
+    startEventProcessor();
     // todo: extract a class named Service, and support stop method
     Thread thread = new Thread("PendingEventProcessThread") {
       @Override
@@ -108,9 +108,9 @@ public class ShuffleFlushManager {
     thread.start();
   }
 
-  protected void startEventProcesser() {
+  private void startEventProcessor() {
     // the thread for flush data
-    Thread processEventThread = new Thread(() -> processEvents(true));
+    Thread processEventThread = new Thread(this::eventLoop);
     processEventThread.setName("ProcessEventThread");
     processEventThread.setDaemon(true);
     processEventThread.start();
@@ -134,20 +134,31 @@ public class ShuffleFlushManager {
     }
   }
 
-  public void processEvents(boolean endless) {
-    while (endless || !flushQueue.isEmpty()) {
-      try {
-        ShuffleDataFlushEvent event = flushQueue.take();
-        threadPoolExecutor.execute(() -> {
-          processEvent(event);
-        });
-      } catch (Exception e) {
-        LOG.error("Exception happened when process event.", e);
-      }
+  protected void eventLoop() {
+    while (true) {
+      processNextEvent();
     }
   }
 
-  protected void processEvent(ShuffleDataFlushEvent event) {
+  @VisibleForTesting
+  public void flush() {
+    while (!flushQueue.isEmpty()) {
+      processNextEvent();
+    }
+  }
+
+  private void processNextEvent() {
+    try {
+      ShuffleDataFlushEvent event = flushQueue.take();
+      threadPoolExecutor.execute(() -> {
+        processEvent(event);
+      });
+    } catch (Exception e) {
+      LOG.error("Exception happened when process event.", e);
+    }
+  }
+
+  private void processEvent(ShuffleDataFlushEvent event) {
     try {
       ShuffleServerMetrics.gaugeWriteHandler.inc();
       flushToFile(event);
