@@ -39,7 +39,7 @@ public class TestShuffleFlushManager extends ShuffleFlushManager {
   }
 
   @Override
-  protected Executor createFlushEventExecutor() {
+  protected Executor getExecutor() {
     return Runnable::run;
   }
 
