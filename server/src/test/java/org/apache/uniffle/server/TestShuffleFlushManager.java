@@ -32,6 +32,12 @@ public class TestShuffleFlushManager extends ShuffleFlushManager {
     // do nothing
   }
 
+  public void flush() {
+    while (!flushQueue.isEmpty()) {
+      processNextEvent();
+    }
+  }
+
   @Override
   protected Executor createFlushEventExecutor() {
     return Runnable::run;
