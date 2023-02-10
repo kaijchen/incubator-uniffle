@@ -160,7 +160,9 @@ public class RssEventFetcher<K,V> {
       LOG.debug("Got " + events.length + " map completion events from "
           + fromEventIdx);
 
-      assert !update.shouldReset() : "Unexpected legacy state";
+      if (update.shouldReset()) {
+        throw new IllegalStateException("Unexpected legacy state: " + update);
+      }
 
       // Update the last seen event ID
       fromEventIdx += events.length;
