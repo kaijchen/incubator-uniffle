@@ -20,21 +20,8 @@ package org.apache.uniffle.common.storage;
 import org.apache.uniffle.proto.RssProtos.StorageInfo;
 
 public enum StorageStatus {
-  UNKNOWN(0),
-  NORMAL(1),
-  UNHEALTHY(2),
-  OVERUSED(3);
 
-  private final byte val;
-
-  StorageStatus(int code) {
-    assert (code >= -1 && code < 256);
-    this.val = (byte) code;
-  }
-
-  public final byte getCode() {
-    return val;
-  }
+  UNKNOWN, NORMAL, UNHEALTHY, OVERUSED;
 
   public StorageInfo.StorageStatus toProto() {
     switch (this) {

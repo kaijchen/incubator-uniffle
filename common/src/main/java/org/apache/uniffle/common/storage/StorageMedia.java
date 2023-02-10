@@ -20,18 +20,8 @@ package org.apache.uniffle.common.storage;
 import org.apache.uniffle.proto.RssProtos.StorageInfo;
 
 public enum StorageMedia {
-  UNKNOWN(0),
-  HDD(1),
-  SSD(2),
-  HDFS(3),
-  OBJECT_STORE(4);
 
-  private final byte val;
-
-  StorageMedia(int code) {
-    assert (code >= -1 && code < 256);
-    this.val = (byte) code;
-  }
+  UNKNOWN, HDD, SSD, HDFS, OBJECT_STORE;
 
   public StorageInfo.StorageMedia toProto() {
     switch (this) {
