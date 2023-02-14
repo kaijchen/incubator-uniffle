@@ -44,6 +44,7 @@ jobs:
       cache-key: spotbugs
   
   java-11:
+    needs: [checkstyle, license, spotbugs] # just for delay execution
     name: 'compile'
     uses: ./.github/workflows/sequential.yml
     with:
@@ -52,6 +53,7 @@ jobs:
       java-version: '11'
 
   java-17:
+    needs: [checkstyle, license, spotbugs] # just for delay execution
     name: 'compile'
     uses: ./.github/workflows/sequential.yml
     with:
