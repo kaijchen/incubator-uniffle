@@ -46,6 +46,7 @@ import org.apache.spark.sql.SparkSession;
 import org.apache.spark.util.AccumulatorV2;
 import org.apache.spark.util.TaskCompletionListener;
 import org.apache.spark.util.TaskFailureListener;
+import org.apache.uniffle.test.common.IntegrationTestBase;
 import org.junit.jupiter.api.Test;
 import scala.Option;
 import scala.Tuple2;

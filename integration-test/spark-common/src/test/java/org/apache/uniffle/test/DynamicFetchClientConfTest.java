@@ -27,6 +27,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.spark.SparkConf;
 import org.apache.spark.shuffle.RssShuffleManager;
 import org.apache.spark.shuffle.RssSparkConfig;
+import org.apache.uniffle.test.common.IntegrationTestBase;
 import org.junit.jupiter.api.Test;
 
 import org.apache.uniffle.coordinator.CoordinatorConf;

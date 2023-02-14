@@ -68,10 +68,18 @@ jobs:
       maven-args: package -Dtest=!org.apache.uniffle.test.**
       reports-path: "**/target/surefire-reports/*.txt"
 
-  integration:
+  integration-common:
+    name: 'integration (common)'
     uses: ./.github/workflows/parallel.yml
     with:
-      maven-args: package -Dtest=org.apache.uniffle.test.**
+      maven-args: package -Dtest=org.apache.uniffle.test.common.**
+      reports-path: "**/target/surefire-reports/*.txt"
+
+  integration-others:
+    name: 'integration (others)'
+    uses: ./.github/workflows/parallel.yml
+    with:
+      maven-args: package -Dtest=org.apache.uniffle.test.**,!org.apache.uniffle.test.common.**
       reports-path: "**/target/surefire-reports/*.txt"
 
   kubernetes:
