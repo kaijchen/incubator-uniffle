@@ -218,7 +218,7 @@ public class GetShuffleReportForMultiPartTest extends SparkIntegrationTestBase {
         ShuffleReadMetricsReporter metrics,
         Roaring64NavigableMap taskIdBitmap) {
       int shuffleId = handle.shuffleId();
-      RssShuffleHandle rssShuffleHandle = (RssShuffleHandle) handle;
+      RssShuffleHandle<?, ?, ?> rssShuffleHandle = (RssShuffleHandle<?, ?, ?>) handle;
       Map<Integer, List<ShuffleServerInfo>> allPartitionToServers = rssShuffleHandle.getPartitionToServers();
       int partitionNum = (int) allPartitionToServers.entrySet().stream()
           .filter(x -> x.getKey() >= startPartition && x.getKey() < endPartition).count();
