@@ -339,7 +339,7 @@ public class RssShuffleManager implements ShuffleManager {
   public <K, V> ShuffleWriter<K, V> getWriter(ShuffleHandle handle, int mapId,
       TaskContext context) {
     if (handle instanceof RssShuffleHandle) {
-      RssShuffleHandle rssHandle = (RssShuffleHandle) handle;
+      RssShuffleHandle<?, ?, ?> rssHandle = (RssShuffleHandle<?, ?, ?>) handle;
       appId = rssHandle.getAppId();
 
       int shuffleId = rssHandle.getShuffleId();
