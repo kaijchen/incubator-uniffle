@@ -102,8 +102,8 @@ public class RssShuffleManager implements ShuffleManager {
   private String user;
   private String uuid;
   private Set<String> failedTaskIds = Sets.newConcurrentHashSet();
-  private final EventLoop eventLoop;
-  private final EventLoop defaultEventLoop = new EventLoop<AddBlockEvent>("ShuffleDataQueue") {
+  private final EventLoop<AddBlockEvent> eventLoop;
+  private final EventLoop<AddBlockEvent> defaultEventLoop = new EventLoop<AddBlockEvent>("ShuffleDataQueue") {
 
     @Override
     public void onReceive(AddBlockEvent event) {
