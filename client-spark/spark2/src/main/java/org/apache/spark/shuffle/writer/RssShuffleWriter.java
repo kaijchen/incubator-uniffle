@@ -95,7 +95,7 @@ public class RssShuffleWriter<K, V, C> extends ShuffleWriter<K, V> {
       RssShuffleManager shuffleManager,
       SparkConf sparkConf,
       ShuffleWriteClient shuffleWriteClient,
-      RssShuffleHandle rssHandle) {
+      RssShuffleHandle<K, V, C> rssHandle) {
     this(
         appId,
         shuffleId,
@@ -121,7 +121,7 @@ public class RssShuffleWriter<K, V, C> extends ShuffleWriter<K, V> {
       RssShuffleManager shuffleManager,
       SparkConf sparkConf,
       ShuffleWriteClient shuffleWriteClient,
-      RssShuffleHandle rssHandle,
+      RssShuffleHandle<K, V, C> rssHandle,
       Function<String, Boolean> taskFailureCallback) {
     this.appId = appId;
     this.bufferManager = bufferManager;
@@ -352,7 +352,7 @@ public class RssShuffleWriter<K, V, C> extends ShuffleWriter<K, V> {
   }
 
   @VisibleForTesting
-  protected <K> int getPartition(K key) {
+  protected <T> int getPartition(T key) {
     int result = 0;
     if (shouldPartition) {
       result = partitioner.getPartition(key);
