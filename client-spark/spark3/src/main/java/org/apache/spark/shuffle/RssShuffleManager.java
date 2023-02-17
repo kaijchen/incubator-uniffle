@@ -303,7 +303,7 @@ public class RssShuffleManager implements ShuffleManager {
     if (dependency.partitioner().numPartitions() == 0) {
       LOG.info("RegisterShuffle with ShuffleId[" + shuffleId + "], partitionNum is 0, "
           + "return the empty RssShuffleHandle directly");
-      return new RssShuffleHandle(shuffleId,
+      return new RssShuffleHandle<>(shuffleId,
         id.get(),
         dependency.rdd().getNumPartitions(),
         dependency,
@@ -459,7 +459,7 @@ public class RssShuffleManager implements ShuffleManager {
     }
     final String storageType = sparkConf.get(RssSparkConfig.RSS_STORAGE_TYPE.key());
     final int indexReadLimit = sparkConf.get(RssSparkConfig.RSS_INDEX_READ_LIMIT);
-    RssShuffleHandle rssShuffleHandle = (RssShuffleHandle) handle;
+    RssShuffleHandle<K, C, ?> rssShuffleHandle = (RssShuffleHandle<K, C, ?>) handle;
     final int partitionNum = rssShuffleHandle.getDependency().partitioner().numPartitions();
     long readBufferSize = sparkConf.getSizeAsBytes(RssSparkConfig.RSS_CLIENT_READ_BUFFER_SIZE.key(),
         RssSparkConfig.RSS_CLIENT_READ_BUFFER_SIZE.defaultValue().get());
