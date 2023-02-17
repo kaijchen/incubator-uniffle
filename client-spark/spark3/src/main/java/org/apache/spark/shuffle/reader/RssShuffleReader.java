@@ -85,7 +85,7 @@ public class RssShuffleReader<K, C> implements ShuffleReader<K, C> {
       int mapStartIndex,
       int mapEndIndex,
       TaskContext context,
-      RssShuffleHandle rssShuffleHandle,
+      RssShuffleHandle<K, C, ?> rssShuffleHandle,
       String basePath,
       int indexReadLimit,
       Configuration hadoopConf,
