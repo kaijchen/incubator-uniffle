@@ -286,7 +286,7 @@ public class RssRemoteMergeManagerImpl<K, V> extends MergeManagerImpl<K, V> {
         (RawComparator<K>)jobConf.getOutputKeyComparator();
     // We will only merge sort once time
     return Merger.merge(jobConf, remoteFS, keyClass, valueClass, codec,
-        onHDFSMapOutputs.toArray(new Path[onHDFSMapOutputs.size()]), true, Integer.MAX_VALUE,
+        onHDFSMapOutputs.toArray(new Path[0]), true, Integer.MAX_VALUE,
         new Path("reduceId"), comparator, reporter, spilledRecordsCounter,
         null, null, null);
   }
