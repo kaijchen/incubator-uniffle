@@ -18,7 +18,6 @@
 package org.apache.uniffle.test;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,7 @@ import org.apache.spark.sql.functions;
 import org.apache.spark.sql.internal.SQLConf;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import org.apache.uniffle.coordinator.CoordinatorConf;
 import org.apache.uniffle.coordinator.strategy.assignment.AbstractAssignmentStrategy;
@@ -53,6 +53,9 @@ public class ContinuousSelectPartitionStrategyTest extends SparkIntegrationTestB
 
   private static final int replicateWrite = 3;
   private static final int replicateRead = 2;
+
+  @TempDir
+  private static File tempDir;
 
   @BeforeAll
   public static void setupServers() throws Exception {
@@ -73,9 +76,9 @@ public class ContinuousSelectPartitionStrategyTest extends SparkIntegrationTestB
   private static void createShuffleServers() throws Exception {
     for (int i = 0; i < 3; i++) {
       // Copy from IntegrationTestBase#getShuffleServerConf
-      File dataFolder = Files.createTempDirectory("rssdata" + i).toFile();
+      File dataFolder = new File(tempDir, "rssdata" + i);
+      dataFolder.mkdir();
       ShuffleServerConf serverConf = new ShuffleServerConf();
-      dataFolder.deleteOnExit();
       serverConf.setInteger("rss.rpc.server.port", SHUFFLE_SERVER_PORT + i);
       serverConf.setString("rss.storage.type", StorageType.MEMORY_LOCALFILE_HDFS.name());
       serverConf.setString("rss.storage.basePath", dataFolder.getAbsolutePath());
@@ -141,7 +144,7 @@ public class ContinuousSelectPartitionStrategyTest extends SparkIntegrationTestB
   }
 
   @Override
-  Map runTest(SparkSession spark, String fileName) throws Exception {
+  Map<Integer, String> runTest(SparkSession spark, String fileName) throws Exception {
     Thread.sleep(4000);
     Map<Integer, String> map = Maps.newHashMap();
     Dataset<Row> df2 = spark.range(0, 1000, 1, 10)

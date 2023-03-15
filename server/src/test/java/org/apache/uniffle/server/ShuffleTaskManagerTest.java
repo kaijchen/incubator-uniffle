@@ -18,7 +18,6 @@
 package org.apache.uniffle.server;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -453,7 +452,7 @@ public class ShuffleTaskManagerTest extends HdfsTestBase {
   }
 
   @Test
-  public void removeShuffleDataWithLocalfileTest() throws Exception {
+  public void removeShuffleDataWithLocalFileTest(@TempDir File tempDir) throws Exception {
     String confFile = ClassLoader.getSystemResource("server.conf").getFile();
     ShuffleServerConf conf = new ShuffleServerConf(confFile);
     conf.set(ShuffleServerConf.RPC_SERVER_PORT, 1234);
@@ -469,10 +468,12 @@ public class ShuffleTaskManagerTest extends HdfsTestBase {
 
     conf.set(ShuffleServerConf.RSS_STORAGE_TYPE, "LOCALFILE");
     conf.set(ShuffleServerConf.RSS_TEST_MODE_ENABLE, true);
-    java.nio.file.Path path1 = Files.createTempDirectory("removeShuffleDataWithLocalfileTest");
-    java.nio.file.Path path2 = Files.createTempDirectory("removeShuffleDataWithLocalfileTest");
+    File dir1 = new File(tempDir, "dir1");
+    File dir2 = new File(tempDir, "dir2");
+    dir1.mkdir();
+    dir2.mkdir();
     conf.setString(ShuffleServerConf.RSS_STORAGE_BASE_PATH.key(),
-        path1.toAbsolutePath().toString() + "," + path2.toAbsolutePath().toString());
+        dir1.getAbsolutePath() + "," + dir2.getAbsolutePath());
 
     shuffleServer = new ShuffleServer(conf);
     ShuffleTaskManager shuffleTaskManager = shuffleServer.getShuffleTaskManager();

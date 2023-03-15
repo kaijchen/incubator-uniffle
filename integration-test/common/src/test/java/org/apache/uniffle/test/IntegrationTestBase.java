@@ -37,6 +37,7 @@ import org.apache.uniffle.server.ShuffleServerConf;
 import org.apache.uniffle.server.ShuffleServerMetrics;
 import org.apache.uniffle.storage.HdfsTestBase;
 import org.apache.uniffle.storage.util.StorageType;
+import org.junit.jupiter.api.io.TempDir;
 
 public abstract class IntegrationTestBase extends HdfsTestBase {
 
@@ -59,6 +60,9 @@ public abstract class IntegrationTestBase extends HdfsTestBase {
 
   protected static List<ShuffleServer> shuffleServers = Lists.newArrayList();
   protected static List<CoordinatorServer> coordinators = Lists.newArrayList();
+
+  @TempDir
+  private static File dataFolder;
 
   public static void startServers() throws Exception {
     for (CoordinatorServer coordinator : coordinators) {
@@ -100,10 +104,8 @@ public abstract class IntegrationTestBase extends HdfsTestBase {
     coordinatorConf.setInteger(CoordinatorConf.COORDINATOR_DYNAMIC_CLIENT_CONF_UPDATE_INTERVAL_SEC, 5);
   }
 
-  protected static ShuffleServerConf getShuffleServerConf() throws Exception {
-    File dataFolder = Files.createTempDirectory("rssdata").toFile();
+  protected static ShuffleServerConf getShuffleServerConf() {
     ShuffleServerConf serverConf = new ShuffleServerConf();
-    dataFolder.deleteOnExit();
     serverConf.setInteger("rss.rpc.server.port", SHUFFLE_SERVER_PORT);
     serverConf.setString("rss.storage.type", StorageType.MEMORY_LOCALFILE_HDFS.name());
     serverConf.setString("rss.storage.basePath", dataFolder.getAbsolutePath());
