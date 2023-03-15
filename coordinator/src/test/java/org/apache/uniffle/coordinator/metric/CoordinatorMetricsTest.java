@@ -20,13 +20,13 @@ package org.apache.uniffle.coordinator.metric;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.nio.file.Files;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import org.apache.uniffle.common.config.RssBaseConf;
 import org.apache.uniffle.common.metrics.TestUtils;
@@ -44,10 +44,9 @@ public class CoordinatorMetricsTest {
   private static CoordinatorServer coordinatorServer;
 
   @BeforeAll
-  public static void setUp() throws Exception {
+  public static void setUp(@TempDir File tempDir) throws Exception {
     String remotePath1 = "hdfs://path1";
-    File cfgFile = Files.createTempFile("coordinatorMetricsTest", ".conf").toFile();
-    cfgFile.deleteOnExit();
+    File cfgFile = File.createTempFile("coordinatorMetricsTest", ".conf", tempDir);
     writeRemoteStorageConf(cfgFile, remotePath1);
 
     CoordinatorConf coordinatorConf = new CoordinatorConf();

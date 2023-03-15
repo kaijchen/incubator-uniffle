@@ -20,12 +20,12 @@ package org.apache.uniffle.test;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.io.TempDir;
 
 import org.apache.uniffle.common.util.RssUtils;
 import org.apache.uniffle.coordinator.CoordinatorConf;
@@ -37,7 +37,6 @@ import org.apache.uniffle.server.ShuffleServerConf;
 import org.apache.uniffle.server.ShuffleServerMetrics;
 import org.apache.uniffle.storage.HdfsTestBase;
 import org.apache.uniffle.storage.util.StorageType;
-import org.junit.jupiter.api.io.TempDir;
 
 public abstract class IntegrationTestBase extends HdfsTestBase {
 
@@ -63,6 +62,8 @@ public abstract class IntegrationTestBase extends HdfsTestBase {
 
   @TempDir
   private static File dataFolder;
+  @TempDir
+  private static File tempDir;
 
   public static void startServers() throws Exception {
     for (CoordinatorServer coordinator : coordinators) {
@@ -148,7 +149,7 @@ public abstract class IntegrationTestBase extends HdfsTestBase {
   }
 
   protected static File createDynamicConfFile(Map<String, String> dynamicConf) throws Exception {
-    File dynamicConfFile = Files.createTempFile("dynamicConf", "conf").toFile();
+    File dynamicConfFile = File.createTempFile("dynamicConf", "conf", tempDir);
     writeRemoteStorageConf(dynamicConfFile, dynamicConf);
     return dynamicConfFile;
   }

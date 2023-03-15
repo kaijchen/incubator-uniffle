@@ -20,7 +20,6 @@ package org.apache.uniffle.coordinator;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.nio.file.Files;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -140,13 +139,12 @@ public class ClientConfManagerTest {
   }
 
   @Test
-  public void dynamicRemoteByAppNumStrategyStorageTest() throws Exception {
+  public void dynamicRemoteByAppNumStrategyStorageTest(@TempDir File tempDir) throws Exception {
     int updateIntervalSec = 2;
     final String remotePath1 = "hdfs://host1/path1";
     final String remotePath2 = "hdfs://host2/path2";
     final String remotePath3 = "hdfs://host3/path3";
-    File cfgFile = Files.createTempFile("dynamicRemoteStorageTest", ".conf").toFile();
-    cfgFile.deleteOnExit();
+    File cfgFile = File.createTempFile("dynamicRemoteStorageTest", ".conf", tempDir);
     writeRemoteStorageConf(cfgFile, remotePath1);
 
     CoordinatorConf conf = new CoordinatorConf();
@@ -202,13 +200,12 @@ public class ClientConfManagerTest {
   }
 
   @Test
-  public void dynamicRemoteByHealthStrategyStorageTest() throws Exception {
+  public void dynamicRemoteByHealthStrategyStorageTest(@TempDir File tempDir) throws Exception {
     final int updateIntervalSec = 2;
     final String remotePath1 = "hdfs://host1/path1";
     final String remotePath2 = "hdfs://host2/path2";
     final String remotePath3 = "hdfs://host3/path3";
-    File cfgFile = Files.createTempFile("dynamicRemoteStorageTest", ".conf").toFile();
-    cfgFile.deleteOnExit();
+    File cfgFile = File.createTempFile("dynamicRemoteStorageTest", ".conf", tempDir);
     writeRemoteStorageConf(cfgFile, remotePath1);
 
     CoordinatorConf conf = new CoordinatorConf();

@@ -20,6 +20,7 @@ package org.apache.uniffle.storage.common;
 import java.io.File;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,14 +29,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class ShuffleFileInfoTest {
 
   @Test
-  public void test() {
+  public void test(@TempDir File tempDir) {
     try {
       ShuffleFileInfo shuffleFileInfo = new ShuffleFileInfo();
-      shuffleFileInfo.getDataFiles().add(File.createTempFile("dummy-data-file", ".data"));
+      shuffleFileInfo.getDataFiles().add(File.createTempFile("dummy-data-file", ".data", tempDir));
       shuffleFileInfo.setKey("key");
       assertFalse(shuffleFileInfo.isValid());
 
-      shuffleFileInfo.getIndexFiles().add(File.createTempFile("dummy-data-file", ".index"));
+      shuffleFileInfo.getIndexFiles().add(File.createTempFile("dummy-data-file", ".index", tempDir));
       shuffleFileInfo.getPartitions().add(12);
       shuffleFileInfo.setSize(1024 * 1024 * 32);
       assertTrue(shuffleFileInfo.isValid());
