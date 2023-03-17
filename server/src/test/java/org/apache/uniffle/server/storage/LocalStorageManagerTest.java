@@ -41,6 +41,7 @@ import org.apache.uniffle.storage.common.LocalStorage;
 import org.apache.uniffle.storage.common.Storage;
 import org.apache.uniffle.storage.util.StorageType;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -238,8 +239,8 @@ public class LocalStorageManagerTest {
     try {
       String mountPoint = Files.getFileStore(new File("/tmp").toPath()).name();
       assertNotNull(storageInfo.get(mountPoint));
-      // by default, it should report HDD as local storage type
-      assertEquals(StorageMedia.HDD, storageInfo.get(mountPoint).getType());
+      // depending on the test environment, it should report HDD or SSD by default as local storage type
+      assertTrue(Arrays.asList(StorageMedia.HDD, StorageMedia.SSD).contains(storageInfo.get(mountPoint).getType()));
       assertEquals(StorageStatus.NORMAL, storageInfo.get(mountPoint).getStatus());
     } catch (IOException e) {
       throw new RuntimeException(e);
