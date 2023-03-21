@@ -19,6 +19,7 @@ package org.apache.uniffle.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -378,17 +380,9 @@ public class ShuffleFlushManagerTest extends HdfsTestBase {
   }
 
   public static void waitForFlush(ShuffleFlushManager manager,
-      String appId, int shuffleId, int expectedBlockNum) throws Exception {
-    int retry = 0;
-    int size = 0;
-    do {
-      Thread.sleep(500);
-      if (retry > 100) {
-        fail("Unexpected flush process");
-      }
-      retry++;
-      size = manager.getCommittedBlockIds(appId, shuffleId).getIntCardinality();
-    } while (size < expectedBlockNum);
+      String appId, int shuffleId, int expectedBlockNum) {
+    Awaitility.await().timeout(Duration.ofMinutes(1))
+        .until(() -> manager.getCommittedBlockIds(appId, shuffleId).getIntCardinality() >= expectedBlockNum);
   }
 
   public static ShuffleDataFlushEvent createShuffleDataFlushEvent(
