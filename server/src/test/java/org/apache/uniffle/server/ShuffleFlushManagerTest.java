@@ -77,8 +77,8 @@ import static org.mockito.Mockito.when;
 
 public class ShuffleFlushManagerTest extends HdfsTestBase {
 
-  private static AtomicInteger ATOMIC_INT = new AtomicInteger(0);
-  private static AtomicLong ATOMIC_LONG = new AtomicLong(0);
+  private AtomicInteger ATOMIC_INT = new AtomicInteger(0);
+  private AtomicLong ATOMIC_LONG = new AtomicLong(0);
 
   private ShuffleServerConf shuffleServerConf = new ShuffleServerConf();
   private RemoteStorageInfo remoteStorage = new RemoteStorageInfo(HDFS_URI + "rss/test", Maps.newHashMap());
@@ -380,15 +380,31 @@ public class ShuffleFlushManagerTest extends HdfsTestBase {
         .until(() -> manager.getCommittedBlockIds(appId, shuffleId).getIntCardinality() >= expectedBlockNum);
   }
 
-  public static ShuffleDataFlushEvent createShuffleDataFlushEvent(
+  public ShuffleDataFlushEvent createShuffleDataFlushEvent(
       String appId, int shuffleId, int startPartition, int endPartition, Supplier<Boolean> isValid) {
     return createShuffleDataFlushEvent(
-      appId,
-      shuffleId,
+        appId,
+        shuffleId,
         startPartition,
         endPartition,
         isValid,
-        1
+        1,
+        ATOMIC_INT,
+        ATOMIC_LONG
+    );
+  }
+
+  public ShuffleDataFlushEvent createShuffleDataFlushEvent(
+      String appId, int shuffleId, int startPartition, int endPartition, Supplier<Boolean> isValid, int size) {
+    return createShuffleDataFlushEvent(
+        appId,
+        shuffleId,
+        startPartition,
+        endPartition,
+        isValid,
+        size,
+        ATOMIC_INT,
+        ATOMIC_LONG
     );
   }
 
@@ -398,20 +414,22 @@ public class ShuffleFlushManagerTest extends HdfsTestBase {
       int startPartition,
       int endPartition,
       Supplier<Boolean> isValid,
-      int size) {
-    List<ShufflePartitionedBlock> spbs = createBlock(5, 32);
-    return new ShuffleDataFlushEvent(ATOMIC_LONG.getAndIncrement(),
+      int size,
+      AtomicInteger blockId,
+      AtomicLong eventId) {
+    List<ShufflePartitionedBlock> spbs = createBlock(5, 32, blockId);
+    return new ShuffleDataFlushEvent(eventId.getAndIncrement(),
         appId, shuffleId, startPartition, endPartition, size, spbs, isValid, null);
   }
 
-  public static List<ShufflePartitionedBlock> createBlock(int num, int length) {
+  public static List<ShufflePartitionedBlock> createBlock(int num, int length, AtomicInteger blockId) {
     List<ShufflePartitionedBlock> blocks = Lists.newArrayList();
     for (int i = 0; i < num; i++) {
       byte[] buf = new byte[length];
       new Random().nextBytes(buf);
       blocks.add(new ShufflePartitionedBlock(
           length, length, ChecksumUtils.getCrc32(buf),
-          ATOMIC_INT.incrementAndGet(), 0, buf));
+          blockId.incrementAndGet(), 0, buf));
     }
     return blocks;
   }

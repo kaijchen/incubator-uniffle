@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.Path;
@@ -60,6 +62,8 @@ public class ShuffleFlushManagerOnKerberizedHdfsTest extends KerberizedHdfsBase 
 
   private static RemoteStorageInfo remoteStorage;
   private static ShuffleServer mockShuffleServer = mock(ShuffleServer.class);
+  private AtomicInteger ATOMIC_INT = new AtomicInteger(0);
+  private AtomicLong ATOMIC_LONG = new AtomicLong(0);
 
   @BeforeEach
   public void prepare() throws Exception {
@@ -113,10 +117,10 @@ public class ShuffleFlushManagerOnKerberizedHdfsTest extends KerberizedHdfsBase 
     ShuffleFlushManager manager =
         new ShuffleFlushManager(shuffleServerConf, "shuffleServerId", mockShuffleServer, storageManager);
     ShuffleDataFlushEvent event1 =
-        createShuffleDataFlushEvent(appId1, 1, 0, 1, null);
+        createShuffleDataFlushEvent(appId1, 1, 0, 1, null, 1, ATOMIC_INT, ATOMIC_LONG);
     manager.addToFlushQueue(event1);
     ShuffleDataFlushEvent event2 =
-        createShuffleDataFlushEvent(appId2, 1, 0, 1, null);
+        createShuffleDataFlushEvent(appId2, 1, 0, 1, null, 1, ATOMIC_INT, ATOMIC_LONG);
     manager.addToFlushQueue(event2);
     waitForFlush(manager, appId1, 1, 5);
     waitForFlush(manager, appId2, 1, 5);
