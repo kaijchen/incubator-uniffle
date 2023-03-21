@@ -42,7 +42,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -84,19 +83,15 @@ public class ShuffleFlushManagerTest extends HdfsTestBase {
   private ShuffleServerConf shuffleServerConf = new ShuffleServerConf();
   private RemoteStorageInfo remoteStorage = new RemoteStorageInfo(HDFS_URI + "rss/test", Maps.newHashMap());
 
-  private static ShuffleServer mockShuffleServer = mock(ShuffleServer.class);
-
-  @BeforeAll
-  public static void beforeAll() throws Exception {
-    ShuffleTaskManager shuffleTaskManager = mock(ShuffleTaskManager.class);
-    ShuffleBufferManager shuffleBufferManager = mock(ShuffleBufferManager.class);
-
-    when(mockShuffleServer.getShuffleTaskManager()).thenReturn(shuffleTaskManager);
-    when(mockShuffleServer.getShuffleBufferManager()).thenReturn(shuffleBufferManager);
-  }
+  private ShuffleServer mockShuffleServer = mock(ShuffleServer.class);
 
   @BeforeEach
   public void prepare() {
+    ShuffleTaskManager shuffleTaskManager = mock(ShuffleTaskManager.class);
+    ShuffleBufferManager shuffleBufferManager = mock(ShuffleBufferManager.class);
+    when(mockShuffleServer.getShuffleTaskManager()).thenReturn(shuffleTaskManager);
+    when(mockShuffleServer.getShuffleBufferManager()).thenReturn(shuffleBufferManager);
+
     ShuffleServerMetrics.register();
     shuffleServerConf.set(ShuffleServerConf.RSS_STORAGE_BASE_PATH, Collections.emptyList());
     shuffleServerConf.setString(ShuffleServerConf.RSS_STORAGE_TYPE, StorageType.HDFS.name());
