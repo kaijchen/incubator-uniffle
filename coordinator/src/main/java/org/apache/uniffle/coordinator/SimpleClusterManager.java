@@ -149,8 +149,8 @@ public class SimpleClusterManager implements ClusterManager {
       }
       outputAliveServerCount++;
 
-      CoordinatorMetrics.gaugeUnhealthyServerNum.set(unhealthyNode.size());
-      CoordinatorMetrics.gaugeTotalServerNum.set(servers.size());
+      CoordinatorMetrics.getUnhealthyServerNumGauge().set(unhealthyNode.size());
+      CoordinatorMetrics.getTotalServerNumGauge().set(servers.size());
     } catch (Exception e) {
       LOG.warn("Error happened in nodesCheck", e);
     }
@@ -179,7 +179,7 @@ public class SimpleClusterManager implements ClusterManager {
     if (newlyExcludeNodesNumber != originalExcludeNodesNumber) {
       LOG.info("Exclude nodes number: {}, nodes list: {}", newlyExcludeNodesNumber, excludeNodes);
     }
-    CoordinatorMetrics.gaugeExcludeServerNum.set(excludeNodes.size());
+    CoordinatorMetrics.getExcludeServerNumGauge().set(excludeNodes.size());
   }
 
   private void parseExcludeNodesFile(DataInputStream fsDataInputStream) throws IOException {

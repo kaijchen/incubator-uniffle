@@ -91,7 +91,7 @@ public class AccessClusterLoadChecker extends AbstractAccessChecker implements R
             + "memory percent threshold %s, available num threshold %s.",
         accessInfo, servers.size(), size, memoryPercentThreshold, availableServerNumThreshold);
     LOG.warn(msg);
-    CoordinatorMetrics.counterTotalLoadDeniedRequest.inc();
+    CoordinatorMetrics.getTotalLoadDeniedRequestCounter().inc();
     return new AccessCheckResult(false, msg);
   }
 

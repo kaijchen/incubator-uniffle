@@ -111,7 +111,7 @@ public class ApplicationManager implements Closeable {
     Map<String, Long> appAndTime = currentUserAndApp.computeIfAbsent(user, x -> JavaUtils.newConcurrentMap());
     appIdToUser.put(appId, user);
     if (!appAndTime.containsKey(appId)) {
-      CoordinatorMetrics.counterTotalAppNum.inc();
+      CoordinatorMetrics.getTotalAppNumCounter().inc();
       LOG.info("New application is registered: {}", appId);
     }
     if (quotaManager != null) {
@@ -291,7 +291,7 @@ public class ApplicationManager implements Closeable {
           appIdToRemoteStorageInfo.remove(appId);
         }
       }
-      CoordinatorMetrics.gaugeRunningAppNum.set(appIds.size());
+      CoordinatorMetrics.getRunningAppNumGauge().set(appIds.size());
       updateRemoteStorageMetrics();
       if (quotaManager != null) {
         quotaManager.updateQuotaMetrics();

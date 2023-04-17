@@ -62,7 +62,7 @@ public class AccessQuotaChecker extends AbstractAccessChecker {
           + ", default app num is: " + quotaManager.getDefaultUserApps().get(user)
           + ". We will reject this app[uuid=" + uuid + "].";
       LOG.error(msg);
-      CoordinatorMetrics.counterTotalQuotaDeniedRequest.inc();
+      CoordinatorMetrics.getTotalQuotaDeniedRequestCounter().inc();
       return new AccessCheckResult(false, msg);
     }
     return new AccessCheckResult(true, Constants.COMMON_SUCCESS_MESSAGE, uuid);

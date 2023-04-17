@@ -106,7 +106,7 @@ public class ApplicationManagerTest {
     applicationManager.registerApplicationInfo(testApp, "user");
     applicationManager.refreshAppId(testApp);
     // just set a value != 0, it should be reset to 0 if everything goes well
-    CoordinatorMetrics.gaugeRunningAppNum.set(100.0);
+    CoordinatorMetrics.getRunningAppNumGauge().set(100.0);
     assertEquals(1, applicationManager.getAppIds().size());
     Thread.sleep(appExpiredTime + 2000);
     assertEquals(0, applicationManager.getAppIds().size());

@@ -143,13 +143,13 @@ public class QuotaManagerTest {
     // The default number of tasks submitted is 2, and the third will be rejected
     assertTrue(icCheck3);
     assertEquals(applicationManager.getQuotaManager().getCurrentUserAndApp().get("user4").size(), 2);
-    assertEquals(CoordinatorMetrics.gaugeRunningAppNumToUser.labels("user4").get(), 2);
-    assertEquals(CoordinatorMetrics.gaugeRunningAppNumToUser.labels("user3").get(), 1);
+    assertEquals(CoordinatorMetrics.getRunningAppNumToUserGauge().labels("user4").get(), 2);
+    assertEquals(CoordinatorMetrics.getRunningAppNumToUserGauge().labels("user3").get(), 1);
     await().atMost(2, TimeUnit.SECONDS).until(() -> {
       applicationManager.statusCheck();
       // If the number of apps corresponding to this user is 0, remove this user
-      return CoordinatorMetrics.gaugeRunningAppNumToUser.labels("user4").get() == 0
-          && CoordinatorMetrics.gaugeRunningAppNumToUser.labels("user3").get() == 0;
+      return CoordinatorMetrics.getRunningAppNumToUserGauge().labels("user4").get() == 0
+          && CoordinatorMetrics.getRunningAppNumToUserGauge().labels("user3").get() == 0;
     });
   }
 }

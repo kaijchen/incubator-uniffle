@@ -207,19 +207,19 @@ public class SimpleClusterManagerTest {
 
       List<ServerNode> serverNodes = clusterManager.getServerList(testTags);
       assertEquals(2, serverNodes.size());
-      assertEquals(0, CoordinatorMetrics.gaugeUnhealthyServerNum.get());
+      assertEquals(0, CoordinatorMetrics.getUnhealthyServerNumGauge().get());
       clusterManager.nodesCheck();
 
       List<ServerNode> serverList = clusterManager.getServerList(testTags);
       Assertions.assertEquals(2, serverList.size());
-      assertEquals(1, CoordinatorMetrics.gaugeUnhealthyServerNum.get());
+      assertEquals(1, CoordinatorMetrics.getUnhealthyServerNumGauge().get());
 
       sn3.setTimestamp(System.currentTimeMillis() - 60 * 1000L);
       clusterManager.nodesCheck();
 
       List<ServerNode> serverList2 = clusterManager.getServerList(testTags);
       Assertions.assertEquals(1, serverList2.size());
-      assertEquals(1, CoordinatorMetrics.gaugeUnhealthyServerNum.get());
+      assertEquals(1, CoordinatorMetrics.getUnhealthyServerNumGauge().get());
     }
   }
 

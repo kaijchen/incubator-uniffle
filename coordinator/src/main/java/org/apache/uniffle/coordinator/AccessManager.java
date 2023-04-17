@@ -69,7 +69,7 @@ public class AccessManager implements Reconfigurable {
 
   public AccessCheckResult handleAccessRequest(AccessInfo accessInfo) {
     String uuid = "";
-    CoordinatorMetrics.counterTotalAccessRequest.inc();
+    CoordinatorMetrics.getTotalAccessRequestCounter().inc();
     for (AccessChecker checker : accessCheckers) {
       AccessCheckResult accessCheckResult = checker.check(accessInfo);
       if (!accessCheckResult.isSuccess()) {

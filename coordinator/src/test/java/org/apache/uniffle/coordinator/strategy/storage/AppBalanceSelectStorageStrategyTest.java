@@ -75,9 +75,9 @@ public class AppBalanceSelectStorageStrategyTest {
     assertEquals(0, applicationManager.getRemoteStoragePathRankValue().get(remotePath1).getAppNum().get());
     assertEquals(0, applicationManager.getRemoteStoragePathRankValue().get(remotePath2).getAppNum().get());
     String storageHost1 = "path1";
-    assertEquals(0.0, CoordinatorMetrics.GAUGE_USED_REMOTE_STORAGE.get(storageHost1).get(), 0.5);
+    assertEquals(0.0, CoordinatorMetrics.getDynamicGaugeForRemoteStorage(storageHost1).get(), 0.5);
     String storageHost2 = "path2";
-    assertEquals(0.0, CoordinatorMetrics.GAUGE_USED_REMOTE_STORAGE.get(storageHost2).get(), 0.5);
+    assertEquals(0.0, CoordinatorMetrics.getDynamicGaugeForRemoteStorage(storageHost2).get(), 0.5);
     // init readWriteRankScheduler
     Thread.sleep(2000);
     // do inc for remotePath1 to make sure pick storage will be remotePath2 in next call
@@ -99,7 +99,7 @@ public class AppBalanceSelectStorageStrategyTest {
     Thread.sleep(appExpiredTime + 2000);
     assertNull(applicationManager.getAppIdToRemoteStorageInfo().get(testApp1));
     assertEquals(0, applicationManager.getRemoteStoragePathRankValue().get(remotePath2).getAppNum().get());
-    assertEquals(0.0, CoordinatorMetrics.GAUGE_USED_REMOTE_STORAGE.get(storageHost2).get(), 0.5);
+    assertEquals(0.0, CoordinatorMetrics.getDynamicGaugeForRemoteStorage(storageHost2).get(), 0.5);
 
     // refresh app1, got remotePath2, then remove remotePath2,
     // it should be existed in counter until it expired

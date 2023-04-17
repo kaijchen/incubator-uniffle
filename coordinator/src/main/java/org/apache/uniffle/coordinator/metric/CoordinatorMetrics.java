@@ -44,62 +44,24 @@ public class CoordinatorMetrics {
   public static final String APP_NUM_TO_USER = "app_num";
   public static final String USER_LABEL = "user_name";
 
-  public static Gauge gaugeTotalServerNum;
-  public static Gauge gaugeExcludeServerNum;
-  public static Gauge gaugeUnhealthyServerNum;
-  public static Gauge gaugeRunningAppNum;
-  public static Gauge gaugeRunningAppNumToUser;
-  public static Counter counterTotalAppNum;
-  public static Counter counterTotalAccessRequest;
-  public static Counter counterTotalCandidatesDeniedRequest;
-  public static Counter counterTotalQuotaDeniedRequest;
-  public static Counter counterTotalLoadDeniedRequest;
-  public static final Map<String, Gauge> GAUGE_USED_REMOTE_STORAGE = JavaUtils.newConcurrentMap();
+  private final Gauge gaugeTotalServerNum;
+  private final Gauge gaugeExcludeServerNum;
+  private final Gauge gaugeUnhealthyServerNum;
+  private final Gauge gaugeRunningAppNum;
+  private final Gauge gaugeRunningAppNumToUser;
+  private final Counter counterTotalAppNum;
+  private final Counter counterTotalAccessRequest;
+  private final Counter counterTotalCandidatesDeniedRequest;
+  private final Counter counterTotalQuotaDeniedRequest;
+  private final Counter counterTotalLoadDeniedRequest;
+  private final Map<String, Gauge> gaugeUsedRemoteStorage = JavaUtils.newConcurrentMap();
 
-  private static MetricsManager metricsManager;
-  private static boolean isRegister = false;
+  private final MetricsManager metricsManager;
 
-  public static synchronized void register(CollectorRegistry collectorRegistry) {
-    if (!isRegister) {
-      metricsManager = new MetricsManager(collectorRegistry);
-      isRegister = true;
-      setUpMetrics();
-    }
-  }
+  private static CoordinatorMetrics instance;
 
-  @VisibleForTesting
-  public static void register() {
-    register(CollectorRegistry.defaultRegistry);
-  }
-
-  @VisibleForTesting
-  public static void clear() {
-    isRegister = false;
-    GAUGE_USED_REMOTE_STORAGE.clear();
-    CollectorRegistry.defaultRegistry.clear();
-  }
-
-  public static CollectorRegistry getCollectorRegistry() {
-    return metricsManager.getCollectorRegistry();
-  }
-
-  public static void addDynamicGaugeForRemoteStorage(String storageHost) {
-    if (!StringUtils.isEmpty(storageHost)) {
-      if (!GAUGE_USED_REMOTE_STORAGE.containsKey(storageHost)) {
-        String metricName = REMOTE_STORAGE_IN_USED_PREFIX + RssUtils.getMetricNameForHostName(storageHost);
-        GAUGE_USED_REMOTE_STORAGE.putIfAbsent(storageHost,
-            metricsManager.addGauge(metricName));
-      }
-    }
-  }
-
-  public static void updateDynamicGaugeForRemoteStorage(String storageHost, double value) {
-    if (GAUGE_USED_REMOTE_STORAGE.containsKey(storageHost)) {
-      GAUGE_USED_REMOTE_STORAGE.get(storageHost).set(value);
-    }
-  }
-
-  private static void setUpMetrics() {
+  private CoordinatorMetrics(CollectorRegistry collectorRegistry) {
+    metricsManager = new MetricsManager(collectorRegistry);
     gaugeTotalServerNum = metricsManager.addGauge(TOTAL_SERVER_NUM);
     gaugeExcludeServerNum = metricsManager.addGauge(EXCLUDE_SERVER_NUM);
     gaugeUnhealthyServerNum = metricsManager.addGauge(UNHEALTHY_SERVER_NUM);
@@ -110,5 +72,86 @@ public class CoordinatorMetrics {
     counterTotalCandidatesDeniedRequest = metricsManager.addCounter(TOTAL_CANDIDATES_DENIED_REQUEST);
     counterTotalQuotaDeniedRequest = metricsManager.addCounter(TOTAL_QUOTA_DENIED_REQUEST);
     counterTotalLoadDeniedRequest = metricsManager.addCounter(TOTAL_LOAD_DENIED_REQUEST);
+  }
+
+  public static synchronized void register(CollectorRegistry collectorRegistry) {
+    if (instance == null) {
+      instance = new CoordinatorMetrics(collectorRegistry);
+    }
+  }
+
+  @VisibleForTesting
+  public static void register() {
+    register(CollectorRegistry.defaultRegistry);
+  }
+
+  @VisibleForTesting
+  public static synchronized void clear() {
+    instance = null;
+    CollectorRegistry.defaultRegistry.clear();
+  }
+
+  public static Gauge getTotalServerNumGauge() {
+    return instance.gaugeTotalServerNum;
+  }
+
+  public static Gauge getExcludeServerNumGauge() {
+    return instance.gaugeExcludeServerNum;
+  }
+
+  public static Gauge getUnhealthyServerNumGauge() {
+    return instance.gaugeUnhealthyServerNum;
+  }
+
+  public static Gauge getRunningAppNumGauge() {
+    return instance.gaugeRunningAppNum;
+  }
+
+  public static Gauge getRunningAppNumToUserGauge() {
+    return instance.gaugeRunningAppNumToUser;
+  }
+
+  public static Counter getTotalAppNumCounter() {
+    return instance.counterTotalAppNum;
+  }
+
+  public static Counter getTotalAccessRequestCounter() {
+    return instance.counterTotalAccessRequest;
+  }
+
+  public static Counter getTotalCandidatesDeniedRequestCounter() {
+    return instance.counterTotalCandidatesDeniedRequest;
+  }
+
+  public static Counter getTotalQuotaDeniedRequestCounter() {
+    return instance.counterTotalQuotaDeniedRequest;
+  }
+
+  public static Counter getTotalLoadDeniedRequestCounter() {
+    return instance.counterTotalLoadDeniedRequest;
+  }
+
+  public static CollectorRegistry getCollectorRegistry() {
+    return instance.metricsManager.getCollectorRegistry();
+  }
+
+  public static void addDynamicGaugeForRemoteStorage(String storageHost) {
+    if (!StringUtils.isEmpty(storageHost)) {
+      if (!instance.gaugeUsedRemoteStorage.containsKey(storageHost)) {
+        String metricName = REMOTE_STORAGE_IN_USED_PREFIX + RssUtils.getMetricNameForHostName(storageHost);
+        instance.gaugeUsedRemoteStorage.putIfAbsent(storageHost,
+            instance.metricsManager.addGauge(metricName));
+      }
+    }
+  }
+
+  public static void updateDynamicGaugeForRemoteStorage(String storageHost, double value) {
+    if (instance.gaugeUsedRemoteStorage.containsKey(storageHost)) {
+      instance.gaugeUsedRemoteStorage.get(storageHost).set(value);
+    }
+  }
+
+  public static Gauge getDynamicGaugeForRemoteStorage(String storageHost) {
+    return instance.gaugeUsedRemoteStorage.get(storageHost);
   }
 }
